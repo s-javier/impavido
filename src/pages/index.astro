@@ -16,22 +16,39 @@ import Animate from './_Animate'
   <!-- h-screen bg-cover bg-center bg-no-repeat -->
   <body class="h-screen">
     <div class="h-screen w-screen absolute overflow-hidden">
-      <img src={bgImg.src} alt="Imagen de miedos" class="absolute w-full" />
+      <img id="bg-img" src={bgImg.src} alt="Imagen de miedos" class="opacity-0 absolute w-full" />
       <div class="absolute h-full w-full bg-opacity-60 bg-black"></div>
       <div class="absolute h-full w-full grid grid-cols-5">
-        <div class="col-span-2">Hola</div>
+        <div class="col-span-2"></div>
         <div
-          class="col-span-3 bg-black bg-opacity-75 p-10 text-white flex flex-col justify-center gap-36"
+          id="panel"
+          class={[
+            'col-span-3 bg-black bg-opacity-75 p-10 text-white flex flex-col',
+            'justify-center gap-36',
+            'transform translate-x-full',
+          ].join(' ')}
         >
           <div>
             <h1 id="title" class="opacity-0 text-8xl uppercase font-thin mb-6">Impávido</h1>
-            <p class="text-2xl italic text-gray-300">Halloween y el miedo están aquí.</p>
+            <!-- <p id="subtitle" class="text-2xl italic text-gray-300">Halloween y el miedo están aquí.</p> -->
+            <p id="subtitle" class="text-2xl italic text-gray-300 h-8"></p>
           </div>
           <div>
-            <p class="text-lg text-gray-300 mb-4">
+            <p id="invitation" class="opacity-0 text-lg text-gray-300 mb-4">
               Esta es la oportunidad perfecta para vencer tu mayor miedo.
             </p>
-            <Textarea client:load />
+            <Textarea id="fear" class="opacity-0 mb-4" client:load />
+            <button
+              id="btn-start"
+              class={[
+                'opacity-0 uppercase text-sm',
+                'inline-flex gap-2 justify-center rounded-lg',
+                'py-3 px-4 bg-slate-700 text-white hover:bg-slate-600',
+              ].join(' ')}
+            >
+              <span>Vencer miedo</span>
+              <span aria-hidden="true" class="hidden text-slate-400 sm:inline">→</span>
+            </button>
           </div>
         </div>
       </div>
