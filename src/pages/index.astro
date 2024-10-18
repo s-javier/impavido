@@ -1,0 +1,47 @@
+---
+import '~/assets/global.css'
+import bgImg from '~/assets/images/bg-image.webp'
+import Textarea from './_Textarea'
+import Animate from './_Animate'
+---
+
+<html lang="es" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+  </head>
+  <!-- h-screen bg-cover bg-center bg-no-repeat -->
+  <body class="h-screen">
+    <div class="h-screen w-screen absolute overflow-hidden">
+      <img src={bgImg.src} alt="Imagen de miedos" class="absolute w-full" />
+      <div class="absolute h-full w-full bg-opacity-60 bg-black"></div>
+      <div class="absolute h-full w-full grid grid-cols-5">
+        <div class="col-span-2">Hola</div>
+        <div
+          class="col-span-3 bg-black bg-opacity-75 p-10 text-white flex flex-col justify-center gap-36"
+        >
+          <div>
+            <h1 id="title" class="opacity-0 text-8xl uppercase font-thin mb-6">Impávido</h1>
+            <p class="text-2xl italic text-gray-300">Halloween y el miedo están aquí.</p>
+          </div>
+          <div>
+            <p class="text-lg text-gray-300 mb-4">
+              Esta es la oportunidad perfecta para vencer tu mayor miedo.
+            </p>
+            <Textarea client:load />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="flex items-center justify-center h-full bg-black bg-opacity-60">
+      <div class="text-center text-white p-8 rounded-lg bg-opacity-50">
+        <h1 class="text-6xl uppercase font-light mb-4">Impávido</h1>
+        <p class="text-xl">Halloween y el miedo están aquí.</p>
+      </div>
+    </div> -->
+    <Animate client:load />
+  </body>
+</html>
