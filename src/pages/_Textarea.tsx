@@ -9,7 +9,7 @@ export default function Textarea(props: { id: string; class: string }) {
   return (
     <textarea
       id={props.id}
-      placeholder="Escribe aquí tu mayor miedo..."
+      placeholder="Tengo miedo a morir..."
       rows="3"
       data-min-rows="3"
       class={[
