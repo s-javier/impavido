@@ -1,8 +1,38 @@
 import { actions } from 'astro:actions'
 import { animate } from 'motion'
-import { delay } from 'es-toolkit'
+import ls from 'localstorage-slim'
+import { useStore } from '@nanostores/solid'
+import * as v from 'valibot'
+import { vignette, sepia } from '@cloudinary/url-gen/actions/effect'
 
-export default function OvercomeFear() {
+import { LocalDBKey } from '~/enums'
+import { $fear, $fearErrMsg } from '~/stores'
+import { cld } from '~/utils/cld'
+
+export default function OvercomeFearBtn() {
+  const fear = useStore($fear)
+
+  const validateRequest = () => {
+    const Schema = {
+      fear: v.pipe(
+        v.string('El valor de este campo es inválido.'),
+        v.trim(),
+        v.nonEmpty('Este campo es requerido.'),
+        v.minLength(5, 'Por favor, desarrolla un poco más la idea.'),
+        v.maxLength(300, 'Por favor, escribe menos. Se admite un máximo de 300 caracteres.'),
+      ),
+    }
+    const fearErr = v.safeParse(Schema.fear, fear())
+    $fearErrMsg.set(fearErr.issues ? fearErr.issues[0].message : '')
+    const verificationResult = v.safeParse(v.object(Schema), {
+      fear: fear(),
+    })
+    if (!verificationResult.success) {
+      return false
+    }
+    return true
+  }
+
   return (
     <button
       id="btn-start"
@@ -12,26 +42,55 @@ export default function OvercomeFear() {
         'py-3 px-4 bg-slate-700 text-white hover:bg-slate-600',
       ].join(' ')}
       onClick={async () => {
+        if (validateRequest() === false) {
+          return
+        }
+
         await animate('#panels', { opacity: 0 }, { duration: 1 }).finished
         document.getElementById('panels')?.classList.add('hidden')
 
         document.getElementById('loader')?.classList.remove('hidden')
         await animate('#loader', { opacity: 1 }, { duration: 1 }).finished
 
-        // await delay(4000)
         const { data, error }: any = await actions.overcome({
-          // title: title().trim(),
+          fear: fear(),
         })
 
         await animate('#loader', { opacity: 0 }, { duration: 0.5 }).finished
         document.getElementById('loader')?.classList.add('hidden')
 
-        await animate('#bg-img-init', { opacity: 0 }, { duration: 0.3 }).finished
-        document.getElementById('bg-img-init')?.classList.add('hidden')
-        document.getElementById('bg-img-better')?.classList.remove('hidden')
-        await animate('#bg-img-better', { opacity: 1 }, { duration: 0.5 }).finished
+        if (error) {
+          $fearErrMsg.set('Hubo un error. Por favor, inténtalo nuevamente o más tarde.')
+        }
+
+        if (data?.error) {
+          $fearErrMsg.set(data.error)
+        }
+
+        if (error || data?.error) {
+          document.getElementById('panels')?.classList.remove('hidden')
+          await animate('#panels', { opacity: 1 }, { duration: 1 }).finished
+          return
+        }
+
+        document.getElementById('layer-init')?.classList.remove('hidden')
+        document.getElementById('layer-init')?.classList.add('overlay-1')
+        document.body.style.backgroundImage = `url(${cld
+          .image('impavido/bg-init')
+          .quality('auto')
+          .format('auto')
+          // .effect(vignette())
+          .effect(sepia())
+          .toURL()})`
+        await animate('#layer-init', { opacity: 0 }, { duration: 0.5 }).finished
+        document.getElementById('layer-init')?.classList.add('hidden')
+
         document.getElementById('overcome')?.classList.remove('hidden')
         await animate('#overcome', { opacity: 1 }, { duration: 0.5 }).finished
+
+        ls.set(LocalDBKey.FEAR_SENT, true)
+        ls.set(LocalDBKey.FEAR_SOLUTION, data.solution)
+        ls.set(LocalDBKey.FEAR_IMAGE_SOLUTION, data.imageSolution)
       }}
     >
       <span>Vencer miedo</span>

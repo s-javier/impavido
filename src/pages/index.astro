@@ -1,15 +1,11 @@
 ---
-import { vignette, sepia } from '@cloudinary/url-gen/actions/effect'
-
 import '~/assets/global.css'
-import bgImg from '~/assets/images/bg-image.webp'
-import { cld } from '~/utils/cloudinary'
 import Panels from './_Panels'
 import Page from './_Page'
 import Overcome from './_Overcome'
 ---
 
-<html lang="es" class="h-full">
+<html lang="es" class="h-screen">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -17,37 +13,19 @@ import Overcome from './_Overcome'
     <meta name="generator" content={Astro.generator} />
     <title>Impávido</title>
   </head>
-  <!-- h-screen bg-cover bg-center bg-no-repeat -->
-  <body class="h-screen">
-    <div class="h-screen w-screen absolute overflow-hidden">
-      <div class="absolute w-full h-full bg-black flex items-center justify-center">
-        <img id="bg-img-init" src={bgImg.src} alt="Imagen de miedos." class="opacity-0 w-full" />
-        <img
-          id="bg-img-better"
-          src={cld
-            .image('impavido/bg-init')
-            .quality('auto')
-            .format('auto')
-            // .effect(vignette())
-            // .effect(blur(1000))
-            .effect(sepia())
-            .toURL()}
-          alt="Imagen cuando los miedos empiezan a desaparecer."
-          class="hidden opacity-0 w-full"
-        />
-      </div>
-      <div class="absolute h-full w-full bg-opacity-60 bg-black"></div>
-      <div class="absolute h-full w-full">
-        <Panels client:load />
-        <Page client:load />
-        <Overcome client:load />
-      </div>
-    </div>
-    <!-- <div class="flex items-center justify-center h-full bg-black bg-opacity-60">
-      <div class="text-center text-white p-8 rounded-lg bg-opacity-50">
-        <h1 class="text-6xl uppercase font-light mb-4">Impávido</h1>
-        <p class="text-xl">Halloween y el miedo están aquí.</p>
-      </div>
-    </div> -->
+  <body class="bg-no-repeat bg-cover bg-center bg-black">
+    <div id="layer-init" class="w-full h-full bg-black"></div>
+    <Panels client:only="solid-js" />
+    <Page client:load />
+    <Overcome client:only="solid-js" />
   </body>
 </html>
+
+<script>
+  import ls from 'localstorage-slim'
+
+  ls.config.ttl = 259200 /* 3 days */
+  // ls.config.encrypt = true
+  // ls.config.secret = 'Impávido-pass'
+  ls.flush()
+</script>
