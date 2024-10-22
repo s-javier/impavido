@@ -15,7 +15,9 @@ export const server = {
     }),
     handler: async (input: any, context: ActionAPIContext) => {
       let solution: any
-      let imageSolution: any
+      let solutionImg: any
+      let perspective: any
+      let perspectiveImg: any
       try {
         const isFear = await anthropic.messages.create({
           model: 'claude-3-5-sonnet-20240620',
@@ -33,6 +35,16 @@ export const server = {
             error: 'El texto ingresado no corresponde a un miedo que puedas tener.',
           }
         }
+        const description = await anthropic.messages.create({
+          model: 'claude-3-5-sonnet-20240620',
+          max_tokens: 1024,
+          messages: [
+            {
+              role: 'user',
+              content: `¿Cuál es una explicación detallada del siguiente miedo de una persona "${input.fear}"? Explicar en no más de 200 palabras`,
+            },
+          ],
+        })
         solution = await anthropic.messages.create({
           model: 'claude-3-5-sonnet-20240620',
           max_tokens: 1024,
@@ -43,15 +55,16 @@ export const server = {
             },
           ],
         })
-        const imgSolution: any = await ky
+        const solutionImage: any = await ky
           .post('https://api.ideogram.ai/generate', {
-            timeout: false,
+            timeout: 100000,
             headers: {
               'Api-Key': import.meta.env.IDEOGRAM_API_KEY,
             },
             json: {
               image_request: {
-                prompt: `Una imagen muy escalofriante, muy oscura, realista y cinematográfica relacionada con el siguiente miedo de una persona "${input.fear}"`,
+                // @ts-ignore
+                prompt: `Una imagen muy escalofriante, atmósfera opresiva, muy oscura, realista y cinematográfica relacionada con el siguiente miedo de una persona "${description.content[0].text}". Los detalles visuales deben incluir que la expresión facial o corporal de una persona debe reflejar terror`,
                 aspect_ratio: 'ASPECT_16_9',
                 model: 'V_2',
                 magic_prompt_option: 'AUTO',
@@ -61,25 +74,47 @@ export const server = {
           })
           .json()
         const cloudinary = getCloudinary()
-        imageSolution = `impavido/fear/${uuidv4()}`
-        await cloudinary.uploader.upload(imgSolution.data[0].url, {
-          public_id: imageSolution,
+        solutionImg = `impavido/fear/${uuidv4()}`
+        await cloudinary.uploader.upload(solutionImage.data[0].url, {
+          public_id: solutionImg,
           use_filename: true,
           unique_filename: false,
           overwrite: true,
         })
-
-        // response = await anthropic.messages.create({
-        //   model: 'claude-3-5-sonnet-20240620',
-        //   max_tokens: 1024,
-        //   messages: [
-        //     {
-        //       role: 'user',
-        //       content:
-        //         'Entrégame una idea totalmente opuesta, positiva y esperanzadora al siguiente miedo de una persona "tengo miedo de tener un accidente vehicular"? La respuesta en un párrafo',
-        //     },
-        //   ],
-        // })
+        perspective = await anthropic.messages.create({
+          model: 'claude-3-5-sonnet-20240620',
+          max_tokens: 1024,
+          messages: [
+            {
+              role: 'user',
+              content: `Entrégame una idea totalmente opuesta, positiva y esperanzadora al siguiente miedo de una persona "${input.fear}". Respuesta en un máximo de 200 caracteres`,
+            },
+          ],
+        })
+        const perspectiveImage: any = await ky
+          .post('https://api.ideogram.ai/generate', {
+            timeout: 100000,
+            headers: {
+              'Api-Key': import.meta.env.IDEOGRAM_API_KEY,
+            },
+            json: {
+              image_request: {
+                prompt: `Una imagen positiva, esperanzadora, realista y cinematográfica al siguiente miedo de una persona "${input.fear}. Los detalles visuales deben incluir que la expresión facial o corporal de una persona debe reflejar felicidad"`,
+                aspect_ratio: 'ASPECT_16_9',
+                model: 'V_2',
+                magic_prompt_option: 'AUTO',
+                style_type: 'REALISTIC',
+              },
+            },
+          })
+          .json()
+        perspectiveImg = `impavido/perspective/${uuidv4()}`
+        await cloudinary.uploader.upload(perspectiveImage.data[0].url, {
+          public_id: perspectiveImg,
+          use_filename: true,
+          unique_filename: false,
+          overwrite: true,
+        })
       } catch (error) {
         if (import.meta.env.DEV) {
           console.log('*** Err ***')
@@ -88,7 +123,9 @@ export const server = {
       }
       return {
         solution: solution.content[0].text,
-        imageSolution,
+        solutionImg,
+        perspective: perspective.content[0].text,
+        perspectiveImg,
       }
       // throw new Error('test')
     },

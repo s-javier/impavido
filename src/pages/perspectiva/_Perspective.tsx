@@ -1,22 +1,19 @@
 import { navigate } from 'astro:transitions/client'
 import { createSignal, onMount, Show } from 'solid-js'
 import { makePersisted } from '@solid-primitives/storage'
-import { vignette, sepia, generativeBackgroundReplace } from '@cloudinary/url-gen/actions/effect'
+import { vignette, sepia } from '@cloudinary/url-gen/actions/effect'
 import { animate } from 'motion'
 
 import { LocalStorageKey } from '~/enums'
 import { cld } from '~/utils/cld'
 import GhostLoader from '~/components/GhostLoader'
 
-export default function Overcome() {
-  const [fear, setFear] = makePersisted(createSignal(''), {
-    name: LocalStorageKey.FEAR as string,
+export default function Perspective() {
+  const [fearPerspective, setFearPerspective] = makePersisted(createSignal(''), {
+    name: LocalStorageKey.FEAR_PERSPECTIVE as string,
   })
-  const [fearOvercome, serFearOvercome] = makePersisted(createSignal(''), {
-    name: LocalStorageKey.FEAR_OVERCOME as string,
-  })
-  const [fearOvercomeImg, serFearOvercomeImg] = makePersisted(createSignal(''), {
-    name: LocalStorageKey.FEAR_OVERCOME_IMG as string,
+  const [fearPerspectiveImg, setFearPerspectiveImg] = makePersisted(createSignal(''), {
+    name: LocalStorageKey.FEAR_PERSPECTIVE_IMG as string,
   })
   const [initAnimation, setInitAnimation] = makePersisted(createSignal(0), {
     name: LocalStorageKey.INIT_ANIMATION as string,
@@ -28,7 +25,7 @@ export default function Overcome() {
     name: LocalStorageKey.IS_FEAR_SENT as string,
   })
   const [isImg, setIsImg] = makePersisted(createSignal(false), {
-    name: LocalStorageKey.IS_FEAR_OVERCOME_IMG as string,
+    name: LocalStorageKey.IS_FEAR_PERSPECTIVE_IMG as string,
   })
 
   onMount(async () => {
@@ -36,7 +33,7 @@ export default function Overcome() {
       navigate('/')
     }
     document.body.style.backgroundImage = `url(${cld
-      .image('impavido/bg-init')
+      .image('impavido/bg-positive')
       .quality('auto')
       .format('auto')
       // .effect(vignette())
@@ -51,36 +48,46 @@ export default function Overcome() {
         id="overcome"
         class="opacity-0 max-w-[800px] flex items-center justify-center m-auto py-10"
       >
-        <div class={['w-full rounded-2xl', 'bg-black bg-opacity-75 p-16 text-white'].join(' ')}>
+        <div class={['w-full rounded-2xl', 'bg-white bg-opacity-75 p-16 text-gray-900'].join(' ')}>
           <h1 id="title" class="text-6xl uppercase font-thin mb-16 text-center">
             Impávido
           </h1>
           <div class="h-[400px] mb-10">
             <Show when={isImg() === false}>
-              <GhostLoader />
+              <GhostLoader textColor="!text-gray-700" />
             </Show>
             <img
               id="bg-img-better"
               src={cld
-                .image(fearOvercomeImg())
-                .quality('auto')
-                .format('auto')
-                .effect(
-                  generativeBackgroundReplace().prompt(
-                    `dark ghost lurking in a spooky environment and relation with "${fear()}"`,
-                  ),
-                )
+                .image(fearPerspectiveImg())
+                .format('auto:animated')
+                // @ts-ignore
+                .effect('e_zoompan:du_8;fps_40;to_(g_auto;zoom_3)')
+                // @ts-ignore
+                .effect('e_loop')
+                // @ts-ignore
+                .delivery('q_auto')
                 .toURL()}
-              alt="Imagen superación."
-              class="h-full rounded-lg m-auto"
+              alt="Imagen psoitiva."
+              class="h-full rounded-md m-auto"
               onLoad={() => {
                 setIsImg(true)
               }}
             />
           </div>
-          <h2 class="text-2xl font-bold mb-6 text-center">Posible superación del miedo</h2>
-          <div class="mb-16">{fearOvercome()}</div>
+          <h2 class="text-2xl font-bold mb-6 text-center">Perspectiva positiva</h2>
+          <div class="mb-16">{fearPerspective()}</div>
           <div class="flex flex-row justify-between">
+            <a
+              href="/superacion"
+              class={[
+                'uppercase text-sm',
+                'inline-flex gap-2 justify-center rounded-lg',
+                'py-3 px-4 bg-slate-700 text-white hover:bg-slate-600',
+              ].join(' ')}
+            >
+              <span>Superación del miedo</span>
+            </a>
             <button
               class={[
                 'uppercase text-sm',
@@ -97,16 +104,6 @@ export default function Overcome() {
             >
               <span>Vencer otro miedo</span>
             </button>
-            <a
-              href="/perspectiva"
-              class={[
-                'uppercase text-sm',
-                'inline-flex gap-2 justify-center rounded-lg',
-                'py-3 px-4 bg-slate-700 text-white hover:bg-slate-600',
-              ].join(' ')}
-            >
-              <span>Cambiar perspectiva</span>
-            </a>
           </div>
         </div>
       </div>

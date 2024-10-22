@@ -19,14 +19,17 @@ export default function OvercomeFearBtn() {
   const [isFearSent, setIsFearSent] = makePersisted(createSignal(false), {
     name: LocalStorageKey.IS_FEAR_SENT as string,
   })
-  const [fearSolution, setFearSolution] = makePersisted(createSignal(''), {
-    name: LocalStorageKey.FEAR_SOLUTION as string,
+  const [fearOvercome, serFearOvercome] = makePersisted(createSignal(''), {
+    name: LocalStorageKey.FEAR_OVERCOME as string,
   })
-  const [fearImgSolution, setFearImgSolution] = makePersisted(createSignal(''), {
-    name: LocalStorageKey.FEAR_IMAGE_SOLUTION as string,
+  const [fearOvercomeImg, serFearOvercomeImg] = makePersisted(createSignal(''), {
+    name: LocalStorageKey.FEAR_OVERCOME_IMG as string,
   })
-  const [isOvercome, setIsOvercome] = makePersisted(createSignal(false), {
-    name: LocalStorageKey.IS_OVERCOME as string,
+  const [fearPerspective, setFearPerspective] = makePersisted(createSignal(''), {
+    name: LocalStorageKey.FEAR_PERSPECTIVE as string,
+  })
+  const [fearPerspectiveImg, setFearPerspectiveImg] = makePersisted(createSignal(''), {
+    name: LocalStorageKey.FEAR_PERSPECTIVE_IMG as string,
   })
 
   const validateRequest = () => {
@@ -85,15 +88,17 @@ export default function OvercomeFearBtn() {
         }
 
         if (error || data?.error) {
-          document.getElementById('panels')?.classList.remove('hidden')
+          setIsPanels(true)
           await animate('#panels', { opacity: 1 }, { duration: 1 }).finished
           return
         }
 
         setIsFearSent(true)
-        setFearSolution(data.solution)
-        setFearImgSolution(data.imageSolution)
-        setIsOvercome(true)
+
+        serFearOvercome(data.solution)
+        serFearOvercomeImg(data.solutionImg)
+        setFearPerspective(data.perspective)
+        setFearPerspectiveImg(data.perspectiveImg)
 
         navigate('/superacion')
       }}

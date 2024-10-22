@@ -1,0 +1,28 @@
+---
+import '~/assets/global.css'
+import Perspective from './_Perspective'
+---
+
+<html lang="es" class="">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Impávido</title>
+  </head>
+  <body class="bg-no-repeat bg-cover bg-center bg-black">
+    <div id="layer-init" class="w-full h-full bg-black"></div>
+    <Perspective client:only="solid-js" />
+  </body>
+</html>
+
+<script>
+  import dayjs from 'dayjs'
+
+  import { LocalStorageKey } from '~/enums'
+
+  if (localStorage.getItem(LocalStorageKey.TIME) === null) {
+    localStorage.setItem(LocalStorageKey.TIME, dayjs().format())
+  }
+</script>

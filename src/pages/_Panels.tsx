@@ -30,6 +30,9 @@ export default function Panels() {
   const isLoader = useStore($isLoader)
 
   onMount(async () => {
+    if (isFearSent()) {
+      navigate('/superacion')
+    }
     document.body.style.backgroundImage = `url(${cld
       .image('impavido/bg-init')
       .quality('auto')

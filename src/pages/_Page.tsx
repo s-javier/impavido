@@ -11,7 +11,8 @@ export default function Page() {
 
   return (
     <Show when={isLoader()}>
-      <div id="loader" class="opacity-0 w-full h-screen flex items-center justify-center">
+      <div id="loader" class="opacity-0 w-full h-screen flex flex-col items-center justify-center">
+        <h1 class="text-2xl uppercase font-thin text-white">Estamos venciendo tu miedo...</h1>
         <div
           class={[
             'flex flex-col justify-center',

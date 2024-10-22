@@ -6,7 +6,10 @@ import { LocalStorageKey } from '~/enums'
 import { $fear, $fearErrMsg } from '~/stores'
 
 export default function Textarea(props: { id: string; class: string }) {
-  const fear = useStore($fear)
+  const [fear, setFear] = makePersisted(
+    createSignal<string>('', { name: LocalStorageKey.FEAR as string }),
+  )
+  const fearStore = useStore($fear)
   const fearErrMsg = useStore($fearErrMsg)
 
   function getScrollHeight(elm: any) {
@@ -20,7 +23,7 @@ export default function Textarea(props: { id: string; class: string }) {
     <>
       <textarea
         id={props.id}
-        value={fear()}
+        value={fearStore()}
         placeholder="Tengo miedo a morir..."
         rows="3"
         data-min-rows="3"
@@ -34,6 +37,7 @@ export default function Textarea(props: { id: string; class: string }) {
         ].join(' ')}
         onInput={({ currentTarget, target: elm }) => {
           $fear.set(currentTarget.value)
+          setFear(currentTarget.value)
           // @ts-ignore
           !elm._baseScrollHeight && getScrollHeight(elm)
           // @ts-ignore
