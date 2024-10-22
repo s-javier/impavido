@@ -1,7 +1,6 @@
 ---
 import '~/assets/global.css'
-import Panels from './_Panels'
-import Page from './_Page'
+import Overcome from './_Overcome'
 ---
 
 <html lang="es" class="">
@@ -13,8 +12,8 @@ import Page from './_Page'
     <title>Impávido</title>
   </head>
   <body class="bg-no-repeat bg-cover bg-center bg-black">
-    <Panels client:only="solid-js" />
-    <Page client:load />
+    <div id="layer-init" class="w-full h-full bg-black"></div>
+    <Overcome client:only="solid-js" />
   </body>
 </html>
 

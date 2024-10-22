@@ -1,16 +1,33 @@
 import { actions } from 'astro:actions'
+import { navigate } from 'astro:transitions/client'
+import { createSignal } from 'solid-js'
+import { makePersisted } from '@solid-primitives/storage'
 import { animate } from 'motion'
-import ls from 'localstorage-slim'
-import { useStore } from '@nanostores/solid'
 import * as v from 'valibot'
 import { vignette, sepia } from '@cloudinary/url-gen/actions/effect'
+import { useStore } from '@nanostores/solid'
 
-import { LocalDBKey } from '~/enums'
-import { $fear, $fearErrMsg } from '~/stores'
-import { cld } from '~/utils/cld'
+import { LocalStorageKey } from '~/enums'
+import { $fear, $fearErrMsg, $isLoader } from '~/stores'
 
 export default function OvercomeFearBtn() {
   const fear = useStore($fear)
+  const [isPanels, setIsPanels] = makePersisted(createSignal(true), {
+    name: LocalStorageKey.IS_PANELS as string,
+  })
+  const isLoader = useStore($isLoader)
+  const [isFearSent, setIsFearSent] = makePersisted(createSignal(false), {
+    name: LocalStorageKey.IS_FEAR_SENT as string,
+  })
+  const [fearSolution, setFearSolution] = makePersisted(createSignal(''), {
+    name: LocalStorageKey.FEAR_SOLUTION as string,
+  })
+  const [fearImgSolution, setFearImgSolution] = makePersisted(createSignal(''), {
+    name: LocalStorageKey.FEAR_IMAGE_SOLUTION as string,
+  })
+  const [isOvercome, setIsOvercome] = makePersisted(createSignal(false), {
+    name: LocalStorageKey.IS_OVERCOME as string,
+  })
 
   const validateRequest = () => {
     const Schema = {
@@ -47,9 +64,9 @@ export default function OvercomeFearBtn() {
         }
 
         await animate('#panels', { opacity: 0 }, { duration: 1 }).finished
-        document.getElementById('panels')?.classList.add('hidden')
+        setIsPanels(false)
 
-        document.getElementById('loader')?.classList.remove('hidden')
+        $isLoader.set(true)
         await animate('#loader', { opacity: 1 }, { duration: 1 }).finished
 
         const { data, error }: any = await actions.overcome({
@@ -57,7 +74,7 @@ export default function OvercomeFearBtn() {
         })
 
         await animate('#loader', { opacity: 0 }, { duration: 0.5 }).finished
-        document.getElementById('loader')?.classList.add('hidden')
+        $isLoader.set(false)
 
         if (error) {
           $fearErrMsg.set('Hubo un error. Por favor, inténtalo nuevamente o más tarde.')
@@ -73,24 +90,12 @@ export default function OvercomeFearBtn() {
           return
         }
 
-        document.getElementById('layer-init')?.classList.remove('hidden')
-        document.getElementById('layer-init')?.classList.add('overlay-1')
-        document.body.style.backgroundImage = `url(${cld
-          .image('impavido/bg-init')
-          .quality('auto')
-          .format('auto')
-          // .effect(vignette())
-          .effect(sepia())
-          .toURL()})`
-        await animate('#layer-init', { opacity: 0 }, { duration: 0.5 }).finished
-        document.getElementById('layer-init')?.classList.add('hidden')
+        setIsFearSent(true)
+        setFearSolution(data.solution)
+        setFearImgSolution(data.imageSolution)
+        setIsOvercome(true)
 
-        document.getElementById('overcome')?.classList.remove('hidden')
-        await animate('#overcome', { opacity: 1 }, { duration: 0.5 }).finished
-
-        ls.set(LocalDBKey.FEAR_SENT, true)
-        ls.set(LocalDBKey.FEAR_SOLUTION, data.solution)
-        ls.set(LocalDBKey.FEAR_IMAGE_SOLUTION, data.imageSolution)
+        navigate('/superacion')
       }}
     >
       <span>Vencer miedo</span>

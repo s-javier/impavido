@@ -1,5 +1,8 @@
+import { createSignal } from 'solid-js'
+import { makePersisted } from '@solid-primitives/storage'
 import { useStore } from '@nanostores/solid'
 
+import { LocalStorageKey } from '~/enums'
 import { $fear, $fearErrMsg } from '~/stores'
 
 export default function Textarea(props: { id: string; class: string }) {
@@ -42,7 +45,7 @@ export default function Textarea(props: { id: string; class: string }) {
           elm.rows = minRows + rows
         }}
       ></textarea>
-      <p class="text-red-500 text-sm mb-4">{fearErrMsg()}</p>
+      <p class="text-red-500 text-sm mb-5">{fearErrMsg()}</p>
     </>
   )
 }
