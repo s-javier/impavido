@@ -3,6 +3,7 @@ import { createSignal, onMount, Show } from 'solid-js'
 import { makePersisted } from '@solid-primitives/storage'
 import { vignette, sepia } from '@cloudinary/url-gen/actions/effect'
 import { animate } from 'motion'
+import { Icon } from '@iconify-icon/solid'
 
 import { LocalStorageKey } from '~/enums'
 import { cld } from '~/utils/cld'
@@ -24,7 +25,10 @@ export default function Perspective() {
   const [isFearSent, setIsFearSent] = makePersisted(createSignal(false), {
     name: LocalStorageKey.IS_FEAR_SENT as string,
   })
-  const [isImg, setIsImg] = makePersisted(createSignal(false), {
+  const [isFearOvercomeImg, setIsFearOvercomeImg] = makePersisted(createSignal(false), {
+    name: LocalStorageKey.IS_FEAR_OVERCOME_IMG as string,
+  })
+  const [isFearPerspectiveImg, setIsFearPerspectiveImg] = makePersisted(createSignal(false), {
     name: LocalStorageKey.IS_FEAR_PERSPECTIVE_IMG as string,
   })
 
@@ -53,7 +57,7 @@ export default function Perspective() {
             Impávido
           </h1>
           <div class="h-[400px] mb-10">
-            <Show when={isImg() === false}>
+            <Show when={isFearPerspectiveImg() === false}>
               <GhostLoader textColor="!text-gray-700" />
             </Show>
             <img
@@ -71,7 +75,7 @@ export default function Perspective() {
               alt="Imagen psoitiva."
               class="h-full rounded-md m-auto"
               onLoad={() => {
-                setIsImg(true)
+                setIsFearPerspectiveImg(true)
               }}
             />
           </div>
@@ -86,6 +90,7 @@ export default function Perspective() {
                 'py-3 px-4 bg-slate-700 text-white hover:bg-slate-600',
               ].join(' ')}
             >
+              <Icon icon="heroicons:arrow-long-left-16-solid" width="100%" class="h-5 w-5" />
               <span>Superación del miedo</span>
             </a>
             <button
@@ -98,10 +103,12 @@ export default function Perspective() {
                 setInitAnimation(0)
                 setIsPanels(true)
                 setIsFearSent(false)
-                setIsImg(false)
+                setIsFearOvercomeImg(false)
+                setIsFearPerspectiveImg(false)
                 navigate('/')
               }}
             >
+              <Icon icon="heroicons:arrow-uturn-left-16-solid" width="100%" class="h-5 w-5" />
               <span>Vencer otro miedo</span>
             </button>
           </div>

@@ -16,7 +16,7 @@ export default function Page() {
         <div
           class={[
             'flex flex-col justify-center',
-            'page relative p-5 px-10 min-w-[400px] min-h-[400px] bg-[#7e5d38] rounded-md m-auto',
+            'page relative p-5 px-10 w-[400px] min-h-[400px] bg-[#7e5d38] rounded-md m-auto',
             'text-black',
           ].join(' ')}
         >

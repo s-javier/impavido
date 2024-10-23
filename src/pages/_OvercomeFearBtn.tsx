@@ -6,6 +6,7 @@ import { animate } from 'motion'
 import * as v from 'valibot'
 import { vignette, sepia } from '@cloudinary/url-gen/actions/effect'
 import { useStore } from '@nanostores/solid'
+import { Icon } from '@iconify-icon/solid'
 
 import { LocalStorageKey } from '~/enums'
 import { $fear, $fearErrMsg, $isLoader } from '~/stores'
@@ -54,59 +55,73 @@ export default function OvercomeFearBtn() {
   }
 
   return (
-    <button
-      id="btn-start"
-      class={[
-        'opacity-0 uppercase text-sm',
-        'inline-flex gap-2 justify-center rounded-lg',
-        'py-3 px-4 bg-slate-700 text-white hover:bg-slate-600',
-      ].join(' ')}
-      onClick={async () => {
-        if (validateRequest() === false) {
-          return
-        }
+    <>
+      <button
+        id="btn-start"
+        class={[
+          'opacity-0',
+          'group relative inline-flex items-center justify-center overflow-hidden rounded-lg',
+          'px-5 py-3 duration-500',
+          '[transition-timing-function:cubic-bezier(0.175,0.885,0.32,1.275)] active:translate-y-1',
+          'active:scale-x-110 active:scale-y-90',
+          'text-sm',
+          'uppercase',
+          // 'font-medium',
+          'bg-slate-700 text-white hover:bg-slate-600',
+        ].join(' ')}
+        onClick={async () => {
+          if (validateRequest() === false) {
+            return
+          }
 
-        await animate('#panels', { opacity: 0 }, { duration: 1 }).finished
-        setIsPanels(false)
+          await animate('#panels', { opacity: 0 }, { duration: 1 }).finished
+          setIsPanels(false)
 
-        $isLoader.set(true)
-        await animate('#loader', { opacity: 1 }, { duration: 1 }).finished
+          $isLoader.set(true)
+          await animate('#loader', { opacity: 1 }, { duration: 1 }).finished
 
-        const { data, error }: any = await actions.overcome({
-          fear: fear(),
-        })
+          const { data, error }: any = await actions.overcome({
+            fear: fear(),
+          })
 
-        await animate('#loader', { opacity: 0 }, { duration: 0.5 }).finished
-        $isLoader.set(false)
+          await animate('#loader', { opacity: 0 }, { duration: 0.5 }).finished
+          $isLoader.set(false)
 
-        if (error) {
-          $fearErrMsg.set('Hubo un error. Por favor, inténtalo nuevamente o más tarde.')
-        }
+          if (error) {
+            $fearErrMsg.set('Hubo un error. Por favor, inténtalo nuevamente o más tarde.')
+          }
 
-        if (data?.error) {
-          $fearErrMsg.set(data.error)
-        }
+          if (data?.error) {
+            $fearErrMsg.set(data.error)
+          }
 
-        if (error || data?.error) {
-          setIsPanels(true)
-          await animate('#panels', { opacity: 1 }, { duration: 1 }).finished
-          return
-        }
+          if (error || data?.error) {
+            setIsPanels(true)
+            await animate('#panels', { opacity: 1 }, { duration: 1 }).finished
+            return
+          }
 
-        setIsFearSent(true)
+          setIsFearSent(true)
 
-        serFearOvercome(data.solution)
-        serFearOvercomeImg(data.solutionImg)
-        setFearPerspective(data.perspective)
-        setFearPerspectiveImg(data.perspectiveImg)
+          serFearOvercome(data.solution)
+          serFearOvercomeImg(data.solutionImg)
+          setFearPerspective(data.perspective)
+          setFearPerspectiveImg(data.perspectiveImg)
 
-        navigate('/superacion')
-      }}
-    >
-      <span>Vencer miedo</span>
-      <span aria-hidden="true" class="hidden text-slate-400 sm:inline">
-        →
-      </span>
-    </button>
+          navigate('/superacion')
+        }}
+      >
+        <div class="relative inline-flex -translate-x-0 items-center transition group-hover:translate-x-6">
+          <div class="absolute top-0 -translate-x-4 opacity-0 transition group-hover:-translate-x-6 group-hover:opacity-100">
+            <Icon icon="heroicons:face-smile" width="100%" class="h-5 w-5" />
+          </div>
+          <span class="pr-6">Vencer miedo</span>
+          <div class="absolute right-0 top-0 translate-x-0 opacity-100 transition group-hover:translate-x-4 group-hover:opacity-0">
+            {/* <Icon icon="heroicons:hand-thumb-up" width="100%" class="h-5 w-5" /> */}
+            <Icon icon="bx:ghost" width="100%" class="h-5 w-5" />
+          </div>
+        </div>
+      </button>
+    </>
   )
 }

@@ -3,6 +3,7 @@ import { createSignal, onMount, Show } from 'solid-js'
 import { makePersisted } from '@solid-primitives/storage'
 import { vignette, sepia, generativeBackgroundReplace } from '@cloudinary/url-gen/actions/effect'
 import { animate } from 'motion'
+import { Icon } from '@iconify-icon/solid'
 
 import { LocalStorageKey } from '~/enums'
 import { cld } from '~/utils/cld'
@@ -27,8 +28,11 @@ export default function Overcome() {
   const [isFearSent, setIsFearSent] = makePersisted(createSignal(false), {
     name: LocalStorageKey.IS_FEAR_SENT as string,
   })
-  const [isImg, setIsImg] = makePersisted(createSignal(false), {
+  const [isFearOvercomeImg, setIsFearOvercomeImg] = makePersisted(createSignal(false), {
     name: LocalStorageKey.IS_FEAR_OVERCOME_IMG as string,
+  })
+  const [isFearPerspectiveImg, setIsFearPerspectiveImg] = makePersisted(createSignal(false), {
+    name: LocalStorageKey.IS_FEAR_PERSPECTIVE_IMG as string,
   })
 
   onMount(async () => {
@@ -56,7 +60,7 @@ export default function Overcome() {
             Impávido
           </h1>
           <div class="h-[400px] mb-10">
-            <Show when={isImg() === false}>
+            <Show when={isFearOvercomeImg() === false}>
               <GhostLoader />
             </Show>
             <img
@@ -67,14 +71,14 @@ export default function Overcome() {
                 .format('auto')
                 .effect(
                   generativeBackgroundReplace().prompt(
-                    `dark ghost lurking in a spooky environment and relation with "${fear()}"`,
+                    `dark ghost lurking in a spooky environment and realistic relation with "${fear()}"`,
                   ),
                 )
                 .toURL()}
               alt="Imagen superación."
               class="h-full rounded-lg m-auto"
               onLoad={() => {
-                setIsImg(true)
+                setIsFearOvercomeImg(true)
               }}
             />
           </div>
@@ -91,10 +95,12 @@ export default function Overcome() {
                 setInitAnimation(0)
                 setIsPanels(true)
                 setIsFearSent(false)
-                setIsImg(false)
+                setIsFearOvercomeImg(false)
+                setIsFearPerspectiveImg(false)
                 navigate('/')
               }}
             >
+              <Icon icon="heroicons:arrow-long-left-16-solid" width="100%" class="h-5 w-5" />
               <span>Vencer otro miedo</span>
             </button>
             <a
@@ -106,6 +112,7 @@ export default function Overcome() {
               ].join(' ')}
             >
               <span>Cambiar perspectiva</span>
+              <Icon icon="heroicons:arrow-long-right-16-solid" width="100%" class="h-5 w-5" />
             </a>
           </div>
         </div>

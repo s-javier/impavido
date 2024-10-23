@@ -80,12 +80,13 @@ export default function Panels() {
   return (
     <Show when={isPanels() && !isLoader()}>
       <div id="panels" ref={panelsRef} class="h-screen grid grid-cols-5">
-        <div class="col-span-2"></div>
+        <div class="hidden md:block col-span-2"></div>
         <div
           id="panel"
           ref={panelRef}
           class={[
-            'col-span-3 bg-black bg-opacity-75 p-10 text-white flex flex-col',
+            'col-span-5 md:col-span-3',
+            'bg-black bg-opacity-75 p-10 text-white flex flex-col',
             'justify-center gap-36',
             'transform translate-x-full',
           ].join(' ')}

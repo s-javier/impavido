@@ -16,6 +16,7 @@
     "@astrojs/solid-js": "4.4.2",
     "@astrojs/tailwind": "5.1.2",
     "@cloudinary/url-gen": "1.21.0",
+    "@iconify-icon/solid": "2.1.1",
     "@nanostores/solid": "0.5.0",
     "@solid-primitives/storage": "4.2.1",
     "astro": "5.0.0-beta.5",

@@ -6,9 +6,9 @@ import { LocalStorageKey } from '~/enums'
 import { $fear, $fearErrMsg } from '~/stores'
 
 export default function Textarea(props: { id: string; class: string }) {
-  const [fear, setFear] = makePersisted(
-    createSignal<string>('', { name: LocalStorageKey.FEAR as string }),
-  )
+  const [fear, setFear] = makePersisted(createSignal<string>(''), {
+    name: LocalStorageKey.FEAR as string,
+  })
   const fearStore = useStore($fear)
   const fearErrMsg = useStore($fearErrMsg)
 
